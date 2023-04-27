@@ -1,3 +1,6 @@
+using LE.AdminService.Extensions;
+using LE.Library.Consul;
+using LE.Library.Host;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -32,6 +35,11 @@ namespace LE.AdminService
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "LE.AdminService", Version = "v1" });
             });
+
+            services.AddHttpContextAccessor();
+            services.AddCustomAuthorization(Configuration);
+            services.AddConsul();
+            services.AddRequestHeader();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
