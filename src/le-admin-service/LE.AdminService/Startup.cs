@@ -1,3 +1,4 @@
+using AutoMapper;
 using LE.AdminService.Extensions;
 using LE.Library.Consul;
 using LE.Library.Host;
@@ -40,6 +41,9 @@ namespace LE.AdminService
             services.AddCustomAuthorization(Configuration);
             services.AddConsul();
             services.AddRequestHeader();
+
+            AddAutoMappers(services);
+            AddDbContext(services);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -62,6 +66,20 @@ namespace LE.AdminService
             {
                 endpoints.MapControllers();
             });
+        }
+
+        private void AddAutoMappers(IServiceCollection services)
+        {
+            var mapperConfig = new MapperConfiguration(mc => {
+                //mc.AddProfile(new NotificationProfile());
+            });
+
+            IMapper mapper = mapperConfig.CreateMapper();
+            services.AddSingleton(mapper);
+        }
+        private void AddDbContext(IServiceCollection services)
+        {
+            services.AddDbContext<LanggeneralDbContext>(options => options.UseNpgsql(Env.DB_CONNECTION_STRING));
         }
     }
 }
