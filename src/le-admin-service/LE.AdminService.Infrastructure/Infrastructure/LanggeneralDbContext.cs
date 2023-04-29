@@ -1337,6 +1337,8 @@ namespace LE.AdminService.Infrastructure.Infrastructure
                     .HasColumnName("created_at")
                     .HasDefaultValueSql("timezone('utc'::text, now())");
 
+                entity.Property(e => e.Locale).HasColumnName("locale");
+
                 entity.Property(e => e.ServiceName)
                     .HasColumnName("service_name")
                     .HasDefaultValueSql("'system'::text");
