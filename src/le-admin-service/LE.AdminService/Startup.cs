@@ -1,6 +1,8 @@
 using AutoMapper;
 using LE.AdminService.Extensions;
 using LE.AdminService.Infrastructure.Infrastructure;
+using LE.AdminService.Services;
+using LE.AdminService.Services.Implements;
 using LE.Library.Consul;
 using LE.Library.Host;
 using Microsoft.AspNetCore.Builder;
@@ -36,6 +38,7 @@ namespace LE.AdminService
             services.AddCustomAuthorization(Configuration);
             services.AddConsul();
             services.AddRequestHeader();
+            services.AddScoped<ISettingService, SettingService>();
 
             AddAutoMappers(services);
             AddDbContext(services);
