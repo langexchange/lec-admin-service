@@ -1,4 +1,5 @@
 using AutoMapper;
+using LE.AdminService.AutoMappers;
 using LE.AdminService.Extensions;
 using LE.AdminService.Infrastructure.Infrastructure;
 using LE.AdminService.Services;
@@ -77,7 +78,7 @@ namespace LE.AdminService
         private void AddAutoMappers(IServiceCollection services)
         {
             var mapperConfig = new MapperConfiguration(mc => {
-                //mc.AddProfile(new NotificationProfile());
+                mc.AddProfile(new SettingProfile());
             });
 
             IMapper mapper = mapperConfig.CreateMapper();
