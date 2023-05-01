@@ -1,9 +1,14 @@
 ﻿using AutoMapper;
+using LE.AdminService.Constants;
 using LE.AdminService.Dtos;
 using LE.AdminService.Models;
 using LE.AdminService.Services;
 using LE.Library.Kernel;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -25,9 +30,11 @@ namespace LE.AdminService.Controllers
             _mapper = mapper;
         }
 
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = PolicyConstant.ADMINPOLICY)]
         [HttpGet]
         public async Task<IActionResult> GetSettingsAsync(CancellationToken cancellationToken)
         {
+            Console.WriteLine(JsonConvert.SerializeObject(_requestHeader));
             var settings = await _settingService.GetSettingsAsync(cancellationToken);
             return Ok(settings);
         }
