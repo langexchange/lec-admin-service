@@ -9,7 +9,7 @@ FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
 ARG NUGET_GITHUB_PASSWORD
 WORKDIR /src
 COPY ["LE.AdminService/NuGet.config", "LE.AdminService/"]
-RUN sed -i "s|</configuration>|<packageSourceCredentials><github><add key=\\\"Username\\\" value=\\\"thuongnguyen1508\\\" /><add key=\\\"ClearTextPassword\\\" value=\\\"${NUGET_GITHUB_PASSWORD}\\\" /></github></packageSourceCredentials></configuration>|" "LE.NotificationService/NuGet.config"
+RUN sed -i "s|</configuration>|<packageSourceCredentials><github><add key=\\\"Username\\\" value=\\\"thuongnguyen1508\\\" /><add key=\\\"ClearTextPassword\\\" value=\\\"${NUGET_GITHUB_PASSWORD}\\\" /></github></packageSourceCredentials></configuration>|" "LE.AdminService/NuGet.config"
 COPY ["LE.AdminService/*.csproj", "LE.AdminService/"]
 COPY ["LE.AdminService.Infrastructure/*.csproj", "LE.AdminService.Infrastructure/"]
 RUN dotnet restore "LE.AdminService/LE.AdminService.csproj" --configfile ./LE.AdminService/NuGet.config
