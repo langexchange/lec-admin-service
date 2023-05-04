@@ -3,7 +3,7 @@ using LE.AdminService.Constant;
 using LE.AdminService.Dtos;
 using LE.AdminService.Infrastructure.Infrastructure;
 using LE.AdminService.Infrastructure.Infrastructure.Entities;
-using LE.AdminService.Models;
+using LE.AdminService.Models.Requests;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System.Collections.Generic;

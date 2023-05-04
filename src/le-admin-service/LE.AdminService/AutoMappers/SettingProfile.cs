@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using LE.AdminService.Dtos;
 using LE.AdminService.Infrastructure.Infrastructure.Entities;
-using LE.AdminService.Models;
+using LE.AdminService.Models.Requests;
 using System;
 
 namespace LE.AdminService.AutoMappers

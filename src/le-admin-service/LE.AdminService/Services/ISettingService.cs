@@ -1,5 +1,5 @@
 ﻿using LE.AdminService.Dtos;
-using LE.AdminService.Models;
+using LE.AdminService.Models.Requests;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;

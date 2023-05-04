@@ -6,6 +6,7 @@ using LE.AdminService.Services;
 using LE.AdminService.Services.Implements;
 using LE.Library.Consul;
 using LE.Library.Host;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -40,6 +41,9 @@ namespace LE.AdminService
             services.AddConsul();
             services.AddRequestHeader();
             services.AddScoped<ISettingService, SettingService>();
+            services.AddSingleton<IAuthorizationHandler, AuthRequirementHandler>();
+            services.AddScoped<IJwtUtils, JwtUtils>();
+            services.AddScoped<IAuthService, AuthService>();
 
             AddAutoMappers(services);
             AddDbContext(services);
@@ -79,6 +83,7 @@ namespace LE.AdminService
         {
             var mapperConfig = new MapperConfiguration(mc => {
                 mc.AddProfile(new SettingProfile());
+                mc.AddProfile(new AdminProfile());
             });
 
             IMapper mapper = mapperConfig.CreateMapper();

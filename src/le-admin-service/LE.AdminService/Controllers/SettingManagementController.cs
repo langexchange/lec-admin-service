@@ -1,9 +1,14 @@
 ﻿using AutoMapper;
+using LE.AdminService.Constants;
 using LE.AdminService.Dtos;
-using LE.AdminService.Models;
+using LE.AdminService.Models.Requests;
 using LE.AdminService.Services;
 using LE.Library.Kernel;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -11,6 +16,7 @@ using System.Threading.Tasks;
 namespace LE.AdminService.Controllers
 {
     [Route("admin/api/settings")]
+    [Authorize(Policy = "SuperAdminOrAdminPolicy")]
     [ApiController]
     public class SettingManagementController : ControllerBase
     {
@@ -28,6 +34,7 @@ namespace LE.AdminService.Controllers
         [HttpGet]
         public async Task<IActionResult> GetSettingsAsync(CancellationToken cancellationToken)
         {
+            Console.WriteLine(JsonConvert.SerializeObject(_requestHeader));
             var settings = await _settingService.GetSettingsAsync(cancellationToken);
             return Ok(settings);
         }

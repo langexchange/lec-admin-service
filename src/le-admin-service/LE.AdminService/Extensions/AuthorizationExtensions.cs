@@ -1,9 +1,12 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using LE.AdminService.Constants;
+using LE.AdminService.JwtHelpers;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Net;
@@ -29,6 +32,7 @@ namespace LE.AdminService.Extensions
                 return null;
             return result;
         }
+
         public static IServiceCollection AddCustomAuthorization(this IServiceCollection services, IConfiguration Configuration)
         {
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
@@ -38,50 +42,69 @@ namespace LE.AdminService.Extensions
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
             })
-                .AddJwtBearer(options =>
+            .AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
                 {
-                    options.TokenValidationParameters = new TokenValidationParameters
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                    ValidateLifetime = false,
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(Env.SECRET_KEY))
+                };
+                options.Events = new JwtBearerEvents
+                {
+                    OnMessageReceived = context =>
                     {
-                        ValidateIssuer = false,
-                        ValidateAudience = false,
-                        ValidateLifetime = false,
-                        ValidateIssuerSigningKey = true,
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(Env.SECRET_KEY))
-                    };
-                    options.Events = new JwtBearerEvents
-                    {
-                        OnMessageReceived = context =>
+                        var accessToken = context.Request.Query["access_token"];
+                        var authorizationValue = GetAuthorizationValue(context.HttpContext.Request.Headers);
+                        var isNotContainBearer = authorizationValue != null && !authorizationValue.Contains("Bearer");
+                        if (isNotContainBearer)
                         {
-                            var accessToken = context.Request.Query["access_token"];
-                            var authorizationValue = GetAuthorizationValue(context.HttpContext.Request.Headers);
-                            var isNotContainBearer = authorizationValue != null && !authorizationValue.Contains("Bearer");
-                            if (isNotContainBearer)
-                            {
-                                var authorization = string.Format("{0} {1}", JwtBearerDefaults.AuthenticationScheme, authorizationValue);
-                                context.HttpContext.Request.Headers.Remove("Authorization");
-                                context.HttpContext.Request.Headers.Add("Authorization", authorization);
-                            }
-                            if (string.IsNullOrEmpty(accessToken) || GetAuthorizationValue(context.HttpContext.Request.Headers) != null)
-                                return Task.CompletedTask;
-
-                            return Task.CompletedTask;
-                        },
-                        OnTokenValidated = context =>
-                        {
-                            return Task.CompletedTask;
-                        },
-                        OnAuthenticationFailed = context =>
-                        {
-                            context.NoResult();
-                            context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
-                            context.Response.ContentType = "text/plain";
-                            return context.Response.WriteAsync(context.Exception.ToString());
+                            var authorization = string.Format("{0} {1}", JwtBearerDefaults.AuthenticationScheme, authorizationValue);
+                            context.HttpContext.Request.Headers.Remove("Authorization");
+                            context.HttpContext.Request.Headers.Add("Authorization", authorization);
                         }
-                    };
+                        if (string.IsNullOrEmpty(accessToken) || GetAuthorizationValue(context.HttpContext.Request.Headers) != null)
+                            return Task.CompletedTask;
+
+                        return Task.CompletedTask;
+                    },
+                    OnTokenValidated = context =>
+                    {
+                        return Task.CompletedTask;
+                    },
+                    OnAuthenticationFailed = context =>
+                    {
+                        context.NoResult();
+                        context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+                        context.Response.ContentType = "text/plain";
+                        return context.Response.WriteAsync(context.Exception.ToString());
+                    }
+                };
+            });
+
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("AdminPolicy", policy =>
+                {
+                    policy.RequireAuthenticatedUser();
+                    policy.Requirements.Add(new AuthRequirement(new List<string>{ UserRole.ADMIN }));
                 });
+                options.AddPolicy("SuperAdminPolicy", policy =>
+                {
+                    policy.RequireAuthenticatedUser();
+                    policy.Requirements.Add(new AuthRequirement(new List<string> { UserRole.SUPERADMIN }));
+                });
+                options.AddPolicy("SuperAdminOrAdminPolicy", policy =>
+                {
+                    policy.RequireAuthenticatedUser();
+                    policy.Requirements.Add(new AuthRequirement(new List<string> { UserRole.ADMIN, UserRole .SUPERADMIN}));
+                });
+            });
+
             return services;
         }
-
         public static IApplicationBuilder UseCustomAuthorization(this IApplicationBuilder app)
         {
             app.UseAuthentication();
