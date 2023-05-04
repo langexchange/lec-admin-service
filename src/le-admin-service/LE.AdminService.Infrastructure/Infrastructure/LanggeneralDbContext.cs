@@ -110,6 +110,10 @@ namespace LE.AdminService.Infrastructure.Infrastructure
                     .HasMaxLength(64)
                     .HasColumnName("first_name");
 
+                entity.Property(e => e.IsSupperAdmin)
+                    .HasColumnName("is_supper_admin")
+                    .HasDefaultValueSql("false");
+
                 entity.Property(e => e.Password)
                     .IsRequired()
                     .HasMaxLength(128)
