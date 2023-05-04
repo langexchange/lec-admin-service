@@ -53,7 +53,7 @@ namespace LE.AdminService.Implements
         public void Register(RegisterRequest model)
         {
             // validate
-            if (_context.Users.Any(x => x.Email.Equals(model.Email)))
+            if (_context.Admins.Any(x => x.Email.Equals(model.Email)))
                 throw new Exception("Email '" + model.Email + "' is already taken");
 
             // map model to new user object
