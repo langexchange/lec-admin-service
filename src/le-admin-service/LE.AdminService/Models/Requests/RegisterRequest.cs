@@ -10,6 +10,10 @@ namespace LE.AdminService.Models.Requests
         [Required]
         public string Password { get; set; }
 
+        public string FirstName { get; set; }
+
+        public string RemainName { get; set; }
+
         public bool IsSupperAdmin { get; set; } = false;
     }
 }

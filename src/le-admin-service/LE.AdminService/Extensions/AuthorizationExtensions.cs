@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Net;
@@ -88,7 +89,17 @@ namespace LE.AdminService.Extensions
                 options.AddPolicy("AdminPolicy", policy =>
                 {
                     policy.RequireAuthenticatedUser();
-                    policy.Requirements.Add(new AdminRequirement(UserRole.CUSTOMER));
+                    policy.Requirements.Add(new AuthRequirement(new List<string>{ UserRole.ADMIN }));
+                });
+                options.AddPolicy("SuperAdminPolicy", policy =>
+                {
+                    policy.RequireAuthenticatedUser();
+                    policy.Requirements.Add(new AuthRequirement(new List<string> { UserRole.SUPERADMIN }));
+                });
+                options.AddPolicy("SuperAdminOrAdminPolicy", policy =>
+                {
+                    policy.RequireAuthenticatedUser();
+                    policy.Requirements.Add(new AuthRequirement(new List<string> { UserRole.ADMIN, UserRole .SUPERADMIN}));
                 });
             });
 

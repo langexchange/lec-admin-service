@@ -1,6 +1,5 @@
 using AutoMapper;
 using LE.AdminService.AutoMappers;
-using LE.AdminService.Constants;
 using LE.AdminService.Extensions;
 using LE.AdminService.Infrastructure.Infrastructure;
 using LE.AdminService.Services;
@@ -42,8 +41,9 @@ namespace LE.AdminService
             services.AddConsul();
             services.AddRequestHeader();
             services.AddScoped<ISettingService, SettingService>();
-            services.AddSingleton<IAuthorizationHandler, AdminRequirementHandler>();
+            services.AddSingleton<IAuthorizationHandler, AuthRequirementHandler>();
             services.AddScoped<IJwtUtils, JwtUtils>();
+            services.AddScoped<IAuthService, AuthService>();
 
             AddAutoMappers(services);
             AddDbContext(services);

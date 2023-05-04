@@ -26,9 +26,9 @@ namespace LE.AdminService.Services.Implements
                 Subject = new ClaimsIdentity(new[] 
                 { 
                     new Claim(ClaimConstant.ID, admin.Adminid.ToString()), 
-                    new Claim(ClaimConstant.TYPE, ClaimConstant.ADMIN)
+                    new Claim(ClaimConstant.TYPE, admin.IsSupperAdmin.HasValue && admin.IsSupperAdmin.Value == true? ClaimConstant.SUPERADMIN: ClaimConstant.ADMIN)
                 }),
-                Expires = DateTime.UtcNow.AddDays(7),
+                Expires = DateTime.UtcNow.AddDays(1),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
             var token = tokenHandler.CreateToken(tokenDescriptor);

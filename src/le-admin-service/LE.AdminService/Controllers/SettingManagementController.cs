@@ -16,6 +16,7 @@ using System.Threading.Tasks;
 namespace LE.AdminService.Controllers
 {
     [Route("admin/api/settings")]
+    [Authorize(Policy = "SuperAdminOrAdminPolicy")]
     [ApiController]
     public class SettingManagementController : ControllerBase
     {
@@ -30,7 +31,6 @@ namespace LE.AdminService.Controllers
             _mapper = mapper;
         }
 
-        [Authorize(Policy = "AdminPolicy")]
         [HttpGet]
         public async Task<IActionResult> GetSettingsAsync(CancellationToken cancellationToken)
         {

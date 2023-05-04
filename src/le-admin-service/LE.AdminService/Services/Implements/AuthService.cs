@@ -9,7 +9,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace LE.AdminService.Implements
+namespace LE.AdminService.Services.Implements
 {
     public class AuthService : IAuthService
     {
@@ -26,7 +26,7 @@ namespace LE.AdminService.Implements
 
         public async Task<AuthResponse> AuthenticateAsync(AuthRequest model)
         {
-            var admin = await _context.Admins.FirstOrDefaultAsync(x => x.Email.Equals(model.Email) && x.Password.Equals(model.Password));
+            var admin = await _context.Admins.FirstOrDefaultAsync(x => x.Email == model.Email && x.Password == model.Password);
 
             // validate
             if (admin == null)

@@ -3,6 +3,7 @@ using LE.AdminService.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using System.Threading.Tasks;
 
 namespace LE.AdminService.Controllers
 {
@@ -19,18 +20,18 @@ namespace LE.AdminService.Controllers
             _authService = authService;
         }
 
-        [Authorize(Policy = "SupperAdminPolicy")]
+        [Authorize(Policy = "SuperAdminPolicy")]
         [HttpPost("create-account")]
         public IActionResult Register(RegisterRequest model)
         {
             _authService.Register(model);
-            return Ok(new { message = "Registration successful" });
+            return Ok();
         }
 
         [HttpPost("login")]
-        public IActionResult Login(AuthRequest model)
+        public async Task<IActionResult> Login(AuthRequest model)
         {
-            var response = _authService.AuthenticateAsync(model);
+            var response =  await _authService.AuthenticateAsync(model);
             return Ok(response);
         }
     }
