@@ -106,7 +106,6 @@ namespace LE.AdminService.Infrastructure.Infrastructure
                     .HasColumnName("email");
 
                 entity.Property(e => e.FirstName)
-                    .IsRequired()
                     .HasMaxLength(64)
                     .HasColumnName("first_name");
 
@@ -120,7 +119,6 @@ namespace LE.AdminService.Infrastructure.Infrastructure
                     .HasColumnName("password");
 
                 entity.Property(e => e.RemainName)
-                    .IsRequired()
                     .HasMaxLength(64)
                     .HasColumnName("remain_name");
 
