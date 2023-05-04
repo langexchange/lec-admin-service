@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using LE.AdminService.Constants;
 using LE.AdminService.Dtos;
-using LE.AdminService.Models;
+using LE.AdminService.Models.Requests;
 using LE.AdminService.Services;
 using LE.Library.Kernel;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -30,7 +30,7 @@ namespace LE.AdminService.Controllers
             _mapper = mapper;
         }
 
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = PolicyConstant.ADMINPOLICY)]
+        [Authorize(Policy = "AdminPolicy")]
         [HttpGet]
         public async Task<IActionResult> GetSettingsAsync(CancellationToken cancellationToken)
         {

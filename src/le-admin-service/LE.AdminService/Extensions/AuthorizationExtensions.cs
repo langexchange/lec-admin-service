@@ -32,33 +32,6 @@ namespace LE.AdminService.Extensions
             return result;
         }
 
-        private static void ModifyPayloadJwt(IHeaderDictionary Headers, IConfiguration Configuration)
-        {
-            var token = GetAuthorizationValue(Headers);
-            if (string.IsNullOrWhiteSpace(token))
-                return;
-            var newToken = string.Empty;
-            var accessToken = token.Split(" ")[1];
-            var handler = new JwtSecurityTokenHandler();
-            var jwtToken = handler.ReadToken(accessToken) as JwtSecurityToken;
-
-            var claimRole = jwtToken.Claims.FirstOrDefault(claim => claim.Type == ClaimConstant.TYPE && 
-                                                                    (claim.Value == ClaimConstant.CUSTOMER || claim.Value == ClaimConstant.ADMIN));
-            var tokenBuilder = new JwtTokenBuilder()
-                                   .AddSecurityKey(JwtSecurityKey.Create(Configuration.GetValue<string>("JwtSettings:Secret")))
-                                   .AddClaims(jwtToken.Claims.ToList());
-            switch (claimRole.Value)
-            {
-                case UserRole.CUSTOMER:
-                    tokenBuilder.AddRole(UserRole.CUSTOMER);
-                    break;
-                case UserRole.ADMIN:
-                    tokenBuilder.AddRole(UserRole.ADMIN);
-                    break;
-            }
-
-            Headers[Authorization] = $"{JwtBearerDefaults.AuthenticationScheme} {tokenBuilder.Build().Value}";
-        }
         public static IServiceCollection AddCustomAuthorization(this IServiceCollection services, IConfiguration Configuration)
         {
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
@@ -98,7 +71,6 @@ namespace LE.AdminService.Extensions
                     },
                     OnTokenValidated = context =>
                     {
-                        ModifyPayloadJwt(context.HttpContext.Request.Headers, Configuration);
                         return Task.CompletedTask;
                     },
                     OnAuthenticationFailed = context =>
@@ -116,9 +88,10 @@ namespace LE.AdminService.Extensions
                 options.AddPolicy("AdminPolicy", policy =>
                 {
                     policy.RequireAuthenticatedUser();
-                    policy.RequireRole(UserRole.CUSTOMER);
+                    policy.Requirements.Add(new AdminRequirement(UserRole.CUSTOMER));
                 });
             });
+
             return services;
         }
         public static IApplicationBuilder UseCustomAuthorization(this IApplicationBuilder app)

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace LE.AdminService.Models
+namespace LE.AdminService.Models.Requests
 {
     public class SettingKeyPairRequest
     {
