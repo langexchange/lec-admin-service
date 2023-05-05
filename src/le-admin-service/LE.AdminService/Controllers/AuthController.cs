@@ -3,6 +3,8 @@ using LE.AdminService.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace LE.AdminService.Controllers
@@ -26,6 +28,22 @@ namespace LE.AdminService.Controllers
         {
             _authService.Register(model);
             return Ok();
+        }
+
+        [Authorize(Policy = "SuperAdminPolicy")]
+        [HttpDelete("admins/{id}")]
+        public async Task<IActionResult> DeleteAdmin(Guid id)
+        {
+            await _authService.DeleteAsync(id);
+            return Ok();
+        }
+
+        [Authorize(Policy = "SuperAdminPolicy")]
+        [HttpGet("admins")]
+        public async Task<IActionResult> GetAdminsAsync()
+        {
+            var dtos = await _authService.GetAdminsAsync();
+            return Ok(dtos);
         }
 
         [HttpPost("login")]

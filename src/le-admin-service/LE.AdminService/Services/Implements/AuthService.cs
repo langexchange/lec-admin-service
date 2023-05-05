@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using LE.AdminService.Dtos;
 using LE.AdminService.Infrastructure.Infrastructure;
 using LE.AdminService.Infrastructure.Infrastructure.Entities;
 using LE.AdminService.Models.Requests;
@@ -6,6 +7,7 @@ using LE.AdminService.Models.Responses;
 using LE.AdminService.Services;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -26,7 +28,7 @@ namespace LE.AdminService.Services.Implements
 
         public async Task<AuthResponse> AuthenticateAsync(AuthRequest model)
         {
-            var admin = await _context.Admins.FirstOrDefaultAsync(x => x.Email == model.Email && x.Password == model.Password);
+            var admin = await _context.Admins.FirstOrDefaultAsync(x => x.Email == model.Email && x.Password == model.Password && x.DeletedAt == null);
 
             // validate
             if (admin == null)
@@ -40,14 +42,19 @@ namespace LE.AdminService.Services.Implements
             return response;
         }
 
-        public void Delete(Guid id)
+        public async Task DeleteAsync(Guid id)
         {
-            throw new System.NotImplementedException();
+            var admin = await _context.Admins.FirstOrDefaultAsync(x => x.Adminid == id);
+            if (admin == null)
+                return;
+            admin.DeletedAt = DateTime.UtcNow;
+            _context.Update(admin);
+            await _context.SaveChangesAsync();
         }
 
-        public Admin GetById(Guid id)
+        public async Task<Admin> GetById(Guid id)
         {
-            return _context.Admins.FirstOrDefault(x => x.Adminid == id);
+           return await _context.Admins.FirstOrDefaultAsync(x => x.Adminid == id);
         }
 
         public void Register(RegisterRequest model)
@@ -76,9 +83,16 @@ namespace LE.AdminService.Services.Implements
             _context.SaveChanges();
         }
 
-        public Admin GetByEmail(string email)
+        public async Task<Admin> GetByEmail(string email)
         {
-            return _context.Admins.FirstOrDefault(x => x.Email == email);
+            return await _context.Admins.FirstOrDefaultAsync(x => x.Email == email);
+        }
+
+        public async Task<List<AdminDto>> GetAdminsAsync()
+        {
+            var admins = await _context.Admins.Where(x => x.DeletedAt == null).ToListAsync();
+            var dtos = _mapper.Map<List<AdminDto>>(admins);
+            return dtos;
         }
     }
 }

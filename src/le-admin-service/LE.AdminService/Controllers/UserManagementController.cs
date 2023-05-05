@@ -1,6 +1,7 @@
 ﻿using LE.AdminService.Dtos;
 using LE.AdminService.Models.Responses;
 using LE.AdminService.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading;
@@ -9,6 +10,7 @@ using System.Threading.Tasks;
 namespace LE.AdminService.Controllers
 {
     [Route("admin/api/users")]
+    [Authorize(Policy = "SuperAdminOrAdminPolicy")]
     [ApiController]
     public class UserManagementController : ControllerBase
     {
