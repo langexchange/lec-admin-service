@@ -44,6 +44,7 @@ namespace LE.AdminService
             services.AddSingleton<IAuthorizationHandler, AuthRequirementHandler>();
             services.AddScoped<IJwtUtils, JwtUtils>();
             services.AddScoped<IAuthService, AuthService>();
+            services.AddScoped<IUserService, Services.Implements.UserService>();
 
             AddAutoMappers(services);
             AddDbContext(services);
@@ -84,6 +85,7 @@ namespace LE.AdminService
             var mapperConfig = new MapperConfiguration(mc => {
                 mc.AddProfile(new SettingProfile());
                 mc.AddProfile(new AdminProfile());
+                mc.AddProfile(new UserProfile());
             });
 
             IMapper mapper = mapperConfig.CreateMapper();
