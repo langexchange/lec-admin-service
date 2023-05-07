@@ -10,7 +10,8 @@ namespace LE.AdminService.AutoMappers
         public UserProfile()
         {
             CreateMap<User, UserDto>()
-                 .ForMember(d => d.Avatar, s => s.MapFrom(x => x.Avartar));
+                 .ForMember(d => d.Avatar, s => s.MapFrom(x => x.Avartar))
+                 .ForMember(d => d.Id, s => s.MapFrom(x => x.Userid));
 
             CreateMap<Language, LanguageDto>()
                .ForMember(d => d.Id, s => s.MapFrom(x => x.Langid))
