@@ -1,0 +1,34 @@
+﻿{
+  "$schema": "http://json.schemastore.org/launchsettings.json",
+  "iisSettings": {
+    "windowsAuthentication": false,
+    "anonymousAuthentication": true,
+    "iisExpress": {
+      "applicationUrl": "http://localhost:64519",
+      "sslPort": 44397
+    }
+  },
+  "profiles": {
+    "IIS Express": {
+      "commandName": "IISExpress",
+      "launchBrowser": true,
+      "launchUrl": "swagger",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    },
+    "LE.AdminService": {
+      "commandName": "Project",
+      "dotnetRunMessages": "true",
+      "launchBrowser": true,
+      "launchUrl": "swagger",
+      "applicationUrl": "http://localhost:5005",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "SECRET_KEY": "c9a56074-ac16-11ed-afa1-0242ac1200023b8f9f24-ac17-11ed-afa1-0242ac12000241c27614-ac17-11ed-afa1-0242ac120002",
+        "DB_CONNECTION_STRING": "Host=database-1.cvisbvujuezh.ap-southeast-1.rds.amazonaws.com;Port=5432;Database=langgeneral;Username=postgres;Password=t0ps3cr3tt0ps3cr3t",
+        "CONSUL_URL": "localhost:8500"
+      }
+    }
+  }
+}
